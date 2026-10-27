@@ -28,6 +28,7 @@ _IDENTIFIERS = {
     "shorthand_property_identifier",
     "shorthand_property_identifier_pattern",
     "package_identifier",
+    "namespace_identifier",
 }
 
 _LITERALS = {
@@ -62,6 +63,9 @@ _LITERALS = {
     "template_string",
     "regex",
     "regex_literal",
+    "number_literal",
+    "concatenated_string",
+    "user_defined_literal",
 }
 
 _OPERATORS = {
@@ -132,6 +136,10 @@ _ATTRIBUTES = {
 _SCOPED = {
     "scoped_identifier",
     "scoped_type_identifier",
+    "qualified_identifier",
+    "template_function",
+    "template_method",
+    "template_type",
 }
 
 _ARG_LISTS = {"argument_list", "arguments"}

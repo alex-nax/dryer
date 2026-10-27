@@ -3,7 +3,9 @@
 Clojure compares every top-level list except `ns`, matching dry4clj. The other
 languages compare the functions and methods crapper scores: bodies, not
 signatures alone, and not callbacks nested inside another function. Rust
-functions inside `mod tests` are test code and are skipped.
+functions inside `mod tests` are test code and are skipped. C and C++ compare
+function definitions with a body as written: macros are not expanded, and a
+function inside an `#if` branch is compared once.
 """
 
 from __future__ import annotations
@@ -143,12 +145,29 @@ def _rust_nodes(data: bytes, root) -> list:
     return found
 
 
+def _c_nodes(data: bytes, root) -> list:
+    """Definitions with a body. Lambdas and local-class methods stay inside."""
+
+    found = []
+    for node in descendants(root):
+        if node.type != "function_definition":
+            continue
+        if not _has(node, "compound_statement", "try_statement"):
+            continue
+        if _inside(node, {"function_definition", "lambda_expression"}):
+            continue
+        found.append(node)
+    return found
+
+
 _PICKERS = {
     "java": ("java", _java_nodes),
     "go": ("go", _go_nodes),
     "python": ("python", _python_nodes),
     "typescript": (_grammar, _typescript_nodes),
     "rust": ("rust", _rust_nodes),
+    "c": ("c", _c_nodes),
+    "cpp": ("cpp", _c_nodes),
 }
 
 
