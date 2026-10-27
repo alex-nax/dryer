@@ -89,6 +89,8 @@ def test_changed_literals_still_match():
     left_cpp = 'int f() { log("a" "b", 10ms, nullptr); return 1; }\n'
     right_cpp = 'int g() { log("c" "d", 20ms, nullptr); return 2; }\n'
     assert score("cpp", left_cpp, right_cpp) == 1.0
+    assert score("cpp", 'int f() { return g("a" "b"); }\n', 'int f() { return g("x"); }\n') == 1.0
+    assert score("cpp", "int f() { return g(10ms); }\n", "int f() { return g(10); }\n") == 1.0
 
 
 def test_a_different_control_structure_is_not_the_same_structure():
@@ -108,6 +110,13 @@ def test_qualified_callee_names_stay():
     left = "int f(Box b) { return b.get<int>(); }\n"
     right = "int g(Box b) { return b.put<int>(); }\n"
     assert score("cpp", left, right) < 1.0
+    differing = [
+        ("void f(V xs) { std::sort(xs); }", "void f(V xs) { boost::sort(xs); }"),
+        ("int f(int a) { return std::max<int>(a); }", "int f(int a) { return std::min<int>(a); }"),
+        ("int f(int n) { return Foo<int>::make(n); }", "int f(int n) { return Bar<int>::make(n); }"),
+    ]
+    for left, right in differing:
+        assert score("cpp", left + "\n", right + "\n") < 1.0, (left, right)
 
 
 def test_macro_calls_are_compared_as_written():
