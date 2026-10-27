@@ -11,6 +11,7 @@ from pathlib import Path
 from dryer.discover import SKIP_DIRS, TEST_DIRS, is_test_file, iter_source_files, language_of
 from dryer.report import format_text, render_edn, write_metrics
 from dryer.scan import find_duplicates, scan_files
+from dryer.treesitter import GrammarUnavailable
 
 
 def _skipped_directory_text() -> str:
@@ -321,4 +322,9 @@ def run(argv: list[str] | None = None) -> int:
 
 
 def main(argv: list[str] | None = None) -> None:
-    sys.exit(run(argv))
+    try:
+        status = run(argv)
+    except GrammarUnavailable as exc:
+        print(f"dryer: {exc}", file=sys.stderr)
+        status = 1
+    sys.exit(status)
