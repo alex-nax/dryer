@@ -1,5 +1,7 @@
 # dryer
 
+> **Fork note (alex-nax/dryer, branch `c-cpp`).** Adds C and C++ support over upstream `unclebob/dryer`. The changes are one language module per tool plus tests and README text, kept small so they can be offered back as pull requests. Licence unchanged (0BSD).
+
 dryer finds candidate duplicate code in Clojure, Java, Go, TypeScript, Rust, Python, C, and C++. One run detects the language of each source file, normalizes that language's forms, and reports pairs whose structure is close enough to review.
 
 Clojure follows [dry4clj](https://github.com/unclebob/dry4clj). The other languages use the same idea on the functions and methods [crapper](https://github.com/unclebob/crapper) and [mutator](https://github.com/unclebob/mutator) already treat as one unit. A form is only compared with forms written in the same language.
